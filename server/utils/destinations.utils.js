@@ -101,12 +101,12 @@ const addReview=async(destinationId,reviewBody)=>{
         const newReview={
             review,
             rating,
-            userId
+            user:userId
         };
         const destination=await Destination.findById(destinationId);
         destination.reviews.push(newReview);
         const updatedRating=destination.reviews.reduce((acc,currVal)=>acc+currVal.rating,0)/destination.reviews.length;
-        destination.rating=updatedRating;
+        destination.rating=updatedRating.toFixed(1);
         await destination.save();
         return destination;
     }catch(error){
@@ -116,7 +116,7 @@ const addReview=async(destinationId,reviewBody)=>{
 
 const getReviewsWithUserDetails=async(destinationId)=>{
     try{
-        const destination=await Destination.findById(destinationId).populate('reviews.user','username profilePictureUrl')
+        const destination=await Destination.findById(destinationId).populate('reviews.user')
         const reviews=destination.reviews;
         return reviews;
     }catch(error){
